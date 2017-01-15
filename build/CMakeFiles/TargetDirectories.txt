@@ -1,0 +1,3 @@
+/home/kaushikcfd/MyStuff/MyGit/GMSH-Interpreter/build/CMakeFiles/edit_cache.dir
+/home/kaushikcfd/MyStuff/MyGit/GMSH-Interpreter/build/CMakeFiles/rebuild_cache.dir
+/home/kaushikcfd/MyStuff/MyGit/GMSH-Interpreter/build/CMakeFiles/gmsh_interpreter.dir
