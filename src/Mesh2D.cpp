@@ -95,16 +95,16 @@ void Mesh2D::write(string nodeFile, string elementFile) {
 
     int i;
     FILE* pFile = freopen(nodeFile.c_str(), "w", stdout);
-    printf("%d\n", noNodes);
+    fprintf(pFile, "%d\n", noNodes);
     for (i=0; i<noNodes; i++) {
-        printf("%6.3f\t%6.3f\n", nodes[i]->getX(), nodes[i]->getY());
+        fprintf(pFile, "%6.3f\t%6.3f\n", nodes[i]->getX(), nodes[i]->getY());
     }
     fclose(pFile);
 
     pFile = freopen(elementFile.c_str(), "w", stdout);
-    printf("%d\n", noElements);
+    fprintf(pFile, "%d\n", noElements);
     for(i=0; i<noElements; i++) {
-        printf("%d\t%d\t%d\n", elements[i]->getNode(0)->getIndex(), elements[i]->getNode(1)->getIndex(), elements[i]->getNode(2)->getIndex());
+        fprintf(pFile, "%d\t%d\t%d\n", elements[i]->getNode(0)->getIndex(), elements[i]->getNode(1)->getIndex(), elements[i]->getNode(2)->getIndex());
     }
     fclose(pFile);
 

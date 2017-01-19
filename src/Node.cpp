@@ -11,9 +11,16 @@
 Node::Node() {
     x = 0.0;
     y = 0.0;
+
     noOfNbgElements = 0;
-    tagState = 0;
-    tagAccept = 0;
+
+    tagState = FAR_AWAY; // Initially the node is considered as `far away` point
+    tagAccept = NOT_ACCEPTED; // As initially the node is considered far_away it is marked as `not_accpeted`
+
+    T = INF; // Initializing the node as a far away point
+    F = 0.0 ; // Initializing the wave speed to be zero
+    v1 = 0.0 ; // Initializing
+    v2 = 0.0 ; // Initalizing
 }
 
 void Node::updateCoords( float _x, float _y) {
@@ -81,6 +88,43 @@ int Node::getIndex() {
     return index;
 }
 
+// `T` related definitions
+void Node::setT(float _T) {
+    T = _T;
+    return ;
+}
+
+float Node::getT() {
+    return T;
+}
+
+// `F,v ` realted functions
+void Node::setF(float _F) {
+	F = _F;
+	return ;
+}
+
+void Node::setv1(float _v1) {
+	v1 = _v1;
+	return ;
+}
+
+void Node::setv2(float _v2) {
+	v2 = _v2;
+	return ;
+}
+
+// ThetaStart and ThetaEnd related member functions
+float* Node::getNbgThetaStart() {
+    return &(nbgThetaStart[0]);
+}
+
+float* Node::getNbgThetaEnd() {
+    return &(nbgThetaEnd[0]);
+}
+
+
+// Destructor definition
 Node::~Node() {
     nbgElements.clear();
     nbgThetaStart.clear();

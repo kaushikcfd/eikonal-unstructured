@@ -4,9 +4,20 @@
 #include "Element.h"
 #include <iostream>
 #include <vector>
+#include <limits>
 
 #ifndef GMSH_INTERPRETER_NODE_H
 #define GMSH_INTERPRETER_NODE_H
+
+#define INF 34028234663852885981170418348451692544.00 // This is the maximum value taken by a float divided by 10
+
+#define ALIVE 100
+#define NARROW_BAND 200
+#define FAR_AWAY 300
+
+#define ACCEPTED 1000
+#define NOT_ACCEPTED 2000
+
 using namespace std;
 
 class Node {
@@ -21,6 +32,10 @@ private:
 
     int tagState; /// This denotes the state of the node which would help in the FMM algorithm
     int tagAccept; /// This tag helps to located whether the node is accepted or not
+    float T; /// The minimum arrival time; this is specific to the question
+    float F; /// The wave speed in the given medium, at this node
+    float v1; /// The medium speed in the x-direction 
+    float v2; /// The medium speed in the y-direction
 
 public:
     // Constructor
@@ -45,6 +60,19 @@ public:
     int getNoOfNbgElements(); /// For the user to read the value of number of nbg Elements
     Element** getNbgElements(); /// For the user to read the value of indices of the nbg Elements
 
+    // ThetaStart and ThetaEnd related routines
+    float* getNbgThetaStart();
+    float* getNbgThetaEnd();
+
+    // `T` related routines
+    void setT(float _T); // For the user to change the value in `T`
+    float getT(); // For the user to get `T`
+
+    // `F, v` related routines
+    void setF(float _F);
+    void setv1(float _v1);
+    void setv2(float _v2);
+    // Destructor
     ~Node();
 };
 
