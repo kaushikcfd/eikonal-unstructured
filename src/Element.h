@@ -16,7 +16,7 @@ private:
     int index;
     Node** nodes; // Currently, there is only support for triangular elements
 
-    int whichNodeOfElement(const Node &_node);
+    int whichNodeOfElement(const Node* const _node);
 
 public:
     Element();
@@ -26,9 +26,8 @@ public:
     void setIndex(int _index);
     int getIndex();
     Node* getNode(int node_index);
-    void assigningOtherCoords(const Node &_node, float &x1, float &y1, float &x2, float &y2);
-
+    void assigningOtherCoords(const Node* const _node, float &x1, float &y1, float &x2, float &y2);
+    void assigningOtherNodes(Node* _node, Node* n1, Node* n2);
     ~Element();
-
 };
 #endif //GMSH_INTERPRETER_ELEMENT_H

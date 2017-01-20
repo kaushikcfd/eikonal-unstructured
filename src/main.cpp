@@ -40,11 +40,58 @@ float mediumSpeed2(float x, float y) {
 
 // The above functions define the problem.
 
+
+//----- Functions to assign the initial wavefront
+
+/**
+ * @brief      To check whether a satisifies the condition of the intial wavefront.
+ *
+ * @param[in]  n	The node which is to be checked whether it satisifies the constraints of the initial wavefront.     
+ *
+ * @return     True if alive, False otherwise.
+ */
+bool isAlive_planar(Node* n) {
+	/// The function is constructed in such a way that for now it is being asumed that we have a planar wavefront at x=0;
+	return ((n->getX()) == 0); 
+}
+
+void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
+	int noNodes = mesh->getNoOfNodes(), noNbgElements, i;
+	Node **nodes = mesh->nodes;
+	Element** nbgElements;
+	Node *n1=NULL, *n2=NULL;//The other two nodes which have to be made narrow band points
+	// TODO: Start from here, all you need to do is get the nbgElements and then in each of the nbgElements check for the 
+	for(i=0; i<noNodes; i++) {
+		if(isAlive(nodes[i])){
+			nodes[i]->updateState(ALIVE);// Updated the state
+			nodes[i]->setT(0.0);// Update the time to be zero ;-)
+			nodes[i]->updateAccept(ACCEPTED);			              
+            //--- Now, adding the neighbouring nodes of the Alive nodes to the narrow band.
+             noNbgElements = nodes[i]->getNoOfNbgElements();
+             nbgElements = nodes[i]->getNbgElements();
+             for(int j=0; j<noNbgElements; j++) {
+             	nbgElements[j]->assigningOtherNodes(nodes[i], n1, n2);
+             	if(!isAlive(n1)){
+             		n1->updateState(NARROW_BAND);
+             		n1->setT(100.0);//// TODO: Find a way to calculate this.
+             	}
+             	if(!isAlive(n2)){
+             		n2->updateState(NARROW_BAND);
+             		n2->setT(100.0);//// TODO: Find a way to calculate this.             		
+             	}
+             }
+		}
+	}
+	return;
+}
+
+/**---------Starting the driver, and calling all the functions-------**/
 int main() {
     Mesh2D mesh;
     mesh.readFromFile(FILE_PATH);
 
     /**--------------------Initializing-------------------------**/
+
      
 
 

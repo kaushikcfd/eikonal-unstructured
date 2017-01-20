@@ -37,7 +37,7 @@ void Node::pushNbgElement( Element* _nbgElement ) {
     float x1, y1, x2, y2; // In order to extract the coords of the other two nodes of the same element
 
 
-    _nbgElement->assigningOtherCoords(*this, x1, y1, x2, y2);
+    _nbgElement->assigningOtherCoords(this, x1, y1, x2, y2);
     thetaStart = ANGLE(atan2(y1 - y, x1- x)*180.0/3.1415926);
     thetaEnd = ANGLE(atan2(y2 - y, x2- x)*180.0/3.1415926);
     if(!((((thetaEnd - thetaStart) > 0) && ((thetaEnd - thetaStart) < 180)) ||(((thetaEnd - thetaStart) > -360) && ((thetaEnd - thetaStart) < -180)) ))
