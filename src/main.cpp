@@ -60,7 +60,9 @@ void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
 	Node **nodes = mesh->nodes;
 	Element** nbgElements;
 	Node *n1=NULL, *n2=NULL;//The other two nodes which have to be made narrow band points
-	// TODO: Start from here, all you need to do is get the nbgElements and then in each of the nbgElements check for the 
+	float t;// A dummy variable so that the value can be calculated in this.
+
+
 	for(i=0; i<noNodes; i++) {
 		if(isAlive(nodes[i])){
 			nodes[i]->updateState(ALIVE);// Updated the state
@@ -73,13 +75,15 @@ void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
              	nbgElements[j]->assigningOtherNodes(nodes[i], n1, n2);
              	if(!isAlive(n1)){
              		n1->updateState(NARROW_BAND);
-             		n1->setT(100.0);//// TODO: Find a way to calculate this.
+             		t = (n1->getX()-nodes[i]->getX())/(n1->getF() + n1->getv1()); // Using this specifically for the given initial conditions. Note: This won't hold when the planar wavefront is approaching from bottom of the domain
+             		n1->setT(t);
              	}
              	if(!isAlive(n2)){
              		n2->updateState(NARROW_BAND);
-             		n2->setT(100.0);//// TODO: Find a way to calculate this.             		
+             		t = (n2->getX()-nodes[i]->getX())/(n2->getF() + n2->getv1()); // Using this specifically for the given initial conditions. Note: This won't hold when the planar wavefront is approaching from bottom of the domain
+             		n2->setT(t);             		
              	}
-             }
+            }
 		}
 	}
 	return;

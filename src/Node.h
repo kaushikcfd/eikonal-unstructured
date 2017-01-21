@@ -72,6 +72,9 @@ public:
     void setF(float _F);
     void setv1(float _v1);
     void setv2(float _v2);
+    float getF();
+    float getv1();
+    float getv2();
     // Destructor
     ~Node();
 };

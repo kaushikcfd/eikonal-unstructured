@@ -114,6 +114,34 @@ void Node::setv2(float _v2) {
 	return ;
 }
 
+/**
+ * @brief      Gets the F.
+ *
+ * @return     The F.
+ */
+float Node::getF(){
+	return F;
+}
+
+/**
+ * @brief      Gets the v1
+ *
+ * @return     The v1
+ */
+float Node::getv1(){
+	return v1;
+}
+
+
+/**
+ * @brief      Gets the v2.
+ *
+ * @return     The v2.
+ */
+float Node::getv2(){
+	return v2;
+}
+
 // ThetaStart and ThetaEnd related member functions
 float* Node::getNbgThetaStart() {
     return &(nbgThetaStart[0]);
