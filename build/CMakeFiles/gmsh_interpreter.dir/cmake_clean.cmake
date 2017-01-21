@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/gmsh_interpreter.dir/main.cpp.o"
+  "CMakeFiles/gmsh_interpreter.dir/EikonalSolver.cpp.o"
   "CMakeFiles/gmsh_interpreter.dir/Mesh2D.cpp.o"
   "CMakeFiles/gmsh_interpreter.dir/Node.cpp.o"
   "CMakeFiles/gmsh_interpreter.dir/Element.cpp.o"

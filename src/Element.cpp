@@ -73,7 +73,7 @@ void Element::assigningOtherCoords(const Node* const _node, float &x1, float &y1
   * @param[out] n1     The adress of the first node would be stored in this pointer.
   * @param[out]	n2	   The adress of the other node would be stored in this pointer.
   */
-void Element::assigningOtherNodes(Node* _node, Node* n1, Node* n2) {
+void Element::assigningOtherNodes(Node* _node, Node* &n1, Node* &n2) {
 	int count = 0;
     int node_indexInElement = whichNodeOfElement(_node);
     for (int i=0; i<3; i++) {

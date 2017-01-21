@@ -50,7 +50,7 @@ float mediumSpeed2(float x, float y) {
  *
  * @return     True if alive, False otherwise.
  */
-bool isAlive_planar(Node* n) {
+bool isAlive_planarLeft(const Node* const n) {
 	/// The function is constructed in such a way that for now it is being asumed that we have a planar wavefront at x=0;
 	return ((n->getX()) == 0); 
 }
@@ -62,16 +62,17 @@ void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
 	Node *n1=NULL, *n2=NULL;//The other two nodes which have to be made narrow band points
 	float t;// A dummy variable so that the value can be calculated in this.
 
-
 	for(i=0; i<noNodes; i++) {
 		if(isAlive(nodes[i])){
 			nodes[i]->updateState(ALIVE);// Updated the state
 			nodes[i]->setT(0.0);// Update the time to be zero ;-)
 			nodes[i]->updateAccept(ACCEPTED);			              
             //--- Now, adding the neighbouring nodes of the Alive nodes to the narrow band.
-             noNbgElements = nodes[i]->getNoOfNbgElements();
-             nbgElements = nodes[i]->getNbgElements();
-             for(int j=0; j<noNbgElements; j++) {
+            noNbgElements = nodes[i]->getNoOfNbgElements();
+            nbgElements = nodes[i]->getNbgElements();
+            
+
+            for(int j=0; j<noNbgElements; j++) {
              	nbgElements[j]->assigningOtherNodes(nodes[i], n1, n2);
              	if(!isAlive(n1)){
              		n1->updateState(NARROW_BAND);
@@ -83,6 +84,7 @@ void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
              		t = (n2->getX()-nodes[i]->getX())/(n2->getF() + n2->getv1()); // Using this specifically for the given initial conditions. Note: This won't hold when the planar wavefront is approaching from bottom of the domain
              		n2->setT(t);             		
              	}
+
             }
 		}
 	}
@@ -91,14 +93,25 @@ void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
 
 /**---------Starting the driver, and calling all the functions-------**/
 int main() {
-    Mesh2D mesh;
-    mesh.readFromFile(FILE_PATH);
+	
+	/*Creating and allocating memory to `mesh`*/
+    Mesh2D *mesh;
+    mesh = new Mesh2D;
+
+    /*Reading the coordinates of the mesh from the file*/
+    mesh->readFromFile(FILE_PATH);
 
     /**--------------------Initializing-------------------------**/
+    setAlivePoints(mesh, isAlive_planarLeft);
 
-     
+    /*Creating and allocating memory to `solver`*/
+    EikonalSolver* solver;
+    solver = new EikonalSolver(mesh, waveSpeed, mediumSpeed1, mediumSpeed2);
 
 
+    /*Plotting the current state of the solver*/
+    solver->plotStates("States.dat");
+    
     return 0;
 }
 

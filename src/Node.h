@@ -30,8 +30,11 @@ private:
     vector<float> nbgThetaStart;
     vector<float> nbgThetaEnd;
 
+    
     int tagState; /// This denotes the state of the node which would help in the FMM algorithm
     int tagAccept; /// This tag helps to located whether the node is accepted or not
+    
+
     float T; /// The minimum arrival time; this is specific to the question
     float F; /// The wave speed in the given medium, at this node
     float v1; /// The medium speed in the x-direction 
@@ -55,7 +58,7 @@ public:
     int getIndex();
 
     // Externing the values to the user
-    float getX(); /// For the user to read the value of x-coordinate
+    float getX() const ; /// For the user to read the value of x-coordinate
     float getY(); /// For the user to read the value of y-coordinate
     int getNoOfNbgElements(); /// For the user to read the value of number of nbg Elements
     Element** getNbgElements(); /// For the user to read the value of indices of the nbg Elements
@@ -75,6 +78,11 @@ public:
     float getF();
     float getv1();
     float getv2();
+    
+    // Getting the tags i.e. tagState & tagAccept
+    int getState();
+    int getAccept();
+
     // Destructor
     ~Node();
 };

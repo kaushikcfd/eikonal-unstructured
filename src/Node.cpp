@@ -64,7 +64,7 @@ bool Node::operator==(Node &rhs) const {
     return ((x == rhs.getX())&&(y == rhs.getY()));
 }
 
-float Node::getX() {
+float Node::getX() const{
     return x;
 }
 
@@ -149,6 +149,15 @@ float* Node::getNbgThetaStart() {
 
 float* Node::getNbgThetaEnd() {
     return &(nbgThetaEnd[0]);
+}
+
+// Getting the tags i.e. tagState & tagAccept
+int Node::getState(){
+	return tagState;
+}
+
+int Node::getAccept(){
+	return tagAccept;
 }
 
 

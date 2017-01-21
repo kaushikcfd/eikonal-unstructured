@@ -38,7 +38,7 @@ private:
 public:
     EikonalSolver(Mesh2D* _mesh, function<float(float, float)> _F, function<float(float, float)> _v1, function<float(float, float)> _v2);
     void readInitialFront(string inputFile);
-    void plot(string outputFile);
+    void plotStates(string outputFile);
 
 };
 

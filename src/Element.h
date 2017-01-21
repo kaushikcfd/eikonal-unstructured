@@ -27,7 +27,7 @@ public:
     int getIndex();
     Node* getNode(int node_index);
     void assigningOtherCoords(const Node* const _node, float &x1, float &y1, float &x2, float &y2);
-    void assigningOtherNodes(Node* _node, Node* n1, Node* n2);
+    void assigningOtherNodes(Node* _node, Node* &n1, Node* &n2);
     ~Element();
 };
 #endif //GMSH_INTERPRETER_ELEMENT_H

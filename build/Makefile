@@ -123,6 +123,33 @@ gmsh_interpreter/fast:
 	$(MAKE) -f CMakeFiles/gmsh_interpreter.dir/build.make CMakeFiles/gmsh_interpreter.dir/build
 .PHONY : gmsh_interpreter/fast
 
+EikonalSolver.o: EikonalSolver.cpp.o
+
+.PHONY : EikonalSolver.o
+
+# target to build an object file
+EikonalSolver.cpp.o:
+	$(MAKE) -f CMakeFiles/gmsh_interpreter.dir/build.make CMakeFiles/gmsh_interpreter.dir/EikonalSolver.cpp.o
+.PHONY : EikonalSolver.cpp.o
+
+EikonalSolver.i: EikonalSolver.cpp.i
+
+.PHONY : EikonalSolver.i
+
+# target to preprocess a source file
+EikonalSolver.cpp.i:
+	$(MAKE) -f CMakeFiles/gmsh_interpreter.dir/build.make CMakeFiles/gmsh_interpreter.dir/EikonalSolver.cpp.i
+.PHONY : EikonalSolver.cpp.i
+
+EikonalSolver.s: EikonalSolver.cpp.s
+
+.PHONY : EikonalSolver.s
+
+# target to generate assembly for a file
+EikonalSolver.cpp.s:
+	$(MAKE) -f CMakeFiles/gmsh_interpreter.dir/build.make CMakeFiles/gmsh_interpreter.dir/EikonalSolver.cpp.s
+.PHONY : EikonalSolver.cpp.s
+
 Element.o: Element.cpp.o
 
 .PHONY : Element.o
@@ -240,6 +267,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... gmsh_interpreter"
+	@echo "... EikonalSolver.o"
+	@echo "... EikonalSolver.i"
+	@echo "... EikonalSolver.s"
 	@echo "... Element.o"
 	@echo "... Element.i"
 	@echo "... Element.s"

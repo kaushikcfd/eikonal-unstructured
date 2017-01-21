@@ -20,3 +20,23 @@ EikonalSolver::EikonalSolver(Mesh2D* _mesh, function<float(float, float)> _F, fu
     	nodes[i]->setv2(v2(x, y)); // Setting the medium speed (y-direction) for the $i^th$ node.
     }
 }
+
+void EikonalSolver::plotStates(string outputFile="States.dat") {
+	FILE* pFile;
+	pFile = freopen(outputFile.c_str(), "w", stdout);
+	Node** nodes = mesh->nodes;
+    int noNodes = mesh->getNoOfNodes();
+    for( int i = 0; i < noNodes; i++) {
+    	if((nodes[i]->getState())==ALIVE){
+    		fprintf(pFile, "%d\n", 0);
+    	}
+    	else if((nodes[i]->getState())==NARROW_BAND){
+    		fprintf(pFile, "%d\n", 1);
+    	}
+    	else{
+    		fprintf(pFile, "%d\n", 2);
+    	}
+    }
+    fclose(pFile);
+
+}
