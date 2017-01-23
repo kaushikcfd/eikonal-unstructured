@@ -61,27 +61,33 @@ void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
 	Element** nbgElements;
 	Node *n1=NULL, *n2=NULL;//The other two nodes which have to be made narrow band points
 	float t;// A dummy variable so that the value can be calculated in this.
+    float x, y;
 
 	for(i=0; i<noNodes; i++) {
 		if(isAlive(nodes[i])){
 			nodes[i]->updateState(ALIVE);// Updated the state
 			nodes[i]->setT(0.0);// Update the time to be zero ;-)
 			nodes[i]->updateAccept(ACCEPTED);			              
-            //--- Now, adding the neighbouring nodes of the Alive nodes to the narrow band.
+            //---Now, adding the neighbouring nodes of the Alive nodes to the narrow band.
             noNbgElements = nodes[i]->getNoOfNbgElements();
             nbgElements = nodes[i]->getNbgElements();
             
 
+            //---Bad design-- see if you can do better :(
             for(int j=0; j<noNbgElements; j++) {
              	nbgElements[j]->assigningOtherNodes(nodes[i], n1, n2);
              	if(!isAlive(n1)){
+                    x = n1->getX();
+                    y = n1->getY();
              		n1->updateState(NARROW_BAND);
-             		t = (n1->getX()-nodes[i]->getX())/(n1->getF() + n1->getv1()); // Using this specifically for the given initial conditions. Note: This won't hold when the planar wavefront is approaching from bottom of the domain
-             		n1->setT(t);
+             		t = (n1->getX()-nodes[i]->getX())/(waveSpeed(x, y) + mediumSpeed1(x, y)); // Using this specifically for the given initial conditions. Note: This won't hold when the planar wavefront is approaching from bottom of the domain
+                    n1->setT(t);
              	}
              	if(!isAlive(n2)){
+                    x = n2->getX();
+                    y = n2->getY();
              		n2->updateState(NARROW_BAND);
-             		t = (n2->getX()-nodes[i]->getX())/(n2->getF() + n2->getv1()); // Using this specifically for the given initial conditions. Note: This won't hold when the planar wavefront is approaching from bottom of the domain
+             		t = (n2->getX()-nodes[i]->getX())/(waveSpeed(x, y) + mediumSpeed1(x, y)); // Using this specifically for the given initial conditions. Note: This won't hold when the planar wavefront is approaching from bottom of the domain
              		n2->setT(t);             		
              	}
 

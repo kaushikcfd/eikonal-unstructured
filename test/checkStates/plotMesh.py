@@ -25,9 +25,9 @@ with open('square_Elements.dat', 'r') as f:
 
 plt.figure()
 plt.gca().set_aspect('equal')
-#plt.axis([-1.2, 1.2, -1.2, 1.2])
+#plt.axis([-.2, 1.3, -.2, 1.3])
 plt.triplot(x, y, triangles, '-', color='black')
-plt.title('Triplot of user-specified triangulation')
+plt.title('Initially all nodes are considered $\mathcal{F}$')
 plt.xlabel('X')
 plt.ylabel('Y')
 
@@ -36,10 +36,11 @@ with open('States.dat', 'r') as f:
     for i in range(noNodes):
         state = map(int, f.readline().strip().split())
         if(state[0]==0):
-            plt.scatter(x[i], y[i], color='green', marker='s', s=80)
+            al = plt.scatter(x[i], y[i], color='green', marker='s', s=80)
         elif(state[0]==1):
-            plt.scatter(x[i], y[i], color='blue', marker='o', s=80)
+            nb = plt.scatter(x[i], y[i], color='blue', marker='o', s=80)
         else:
-            plt.scatter(x[i], y[i], color='red', marker='^', s=80)
+            far = plt.scatter(x[i], y[i], color='red', marker='d', s=50)
 
+plt.legend((al, nb, far), ('Alive($\mathcal{A}$)', 'Narrow-Band($\mathcal{N}$)', 'Far-Away($\mathcal{F}$)'), scatterpoints=1, loc='upper right', fontsize=8)
 plt.show()
