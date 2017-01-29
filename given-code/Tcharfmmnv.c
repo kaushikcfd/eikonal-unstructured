@@ -35,7 +35,7 @@ int main () {
     float Dx,Dy;
     
     struct sv *s;
-	struct mv *m;
+    struct mv *m;
     
     FILE *fpi;
 //-------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void charfmm_without_ref(int NGx, int NGy, int NAP, float Dx, float Dy,
 //-------------------------------------------------------------------------------------
 //|------------------------------MARCHING FORWARD-------------------------------------|
 //=====================================================================================
-	while(NAP<=NGx*NGy-1) 
+	while(NAP<=NGx*NGy-1) // The condition is that: To continue this loop till all the nodes are marked alive.
 	{
         NNP=*(s->NBP);
 //  printf("NAP = %d\n",NAP);   
@@ -150,7 +150,7 @@ void charfmm_without_ref(int NGx, int NGy, int NAP, float Dx, float Dy,
 //------------------------Calculating the solution at Neighbor Points------------------
 //-------------------------------------------------------------------------------------
 
-        if(I<NGx) 
+        if(I<NGx)
         {   
             i=I+1;j=J;  
             if (*(*(s->I+j)+i)!=Alive_pt)

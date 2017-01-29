@@ -73,7 +73,8 @@ void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
             nbgElements = nodes[i]->getNbgElements();
             
 
-            //---Bad design-- see if you can do better :(
+            //---Bad design-- see if you can do better :(.
+            // ^About the x,y which is being used. Rest everything is fine. 
             for(int j=0; j<noNbgElements; j++) {
              	nbgElements[j]->assigningOtherNodes(nodes[i], n1, n2);
              	if(!isAlive(n1)){
@@ -90,7 +91,6 @@ void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
              		t = (n2->getX()-nodes[i]->getX())/(waveSpeed(x, y) + mediumSpeed1(x, y)); // Using this specifically for the given initial conditions. Note: This won't hold when the planar wavefront is approaching from bottom of the domain
              		n2->setT(t);             		
              	}
-
             }
 		}
 	}

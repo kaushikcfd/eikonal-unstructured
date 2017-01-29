@@ -281,7 +281,7 @@ float CharDir(float F, float vx, float vy, double T,double a,double b,double c,d
 int schemeF(struct mv *m,struct sv *s,int i,int j,int NGx,int NGy,float Dx,float Dy)
 {
 
-    double Txd,Tyd;
+    double Txd,Tyd;// The derivatives in the x- & y- direction respectively.
 
     float F,vx,vy,Norm;
     float e[6][2],Ediff;
@@ -309,6 +309,7 @@ int schemeF(struct mv *m,struct sv *s,int i,int j,int NGx,int NGy,float Dx,float
 
     ip=i+1;im=i-1;
     jp=j+1;jm=j-1;
+// Instead of writing like this, I need to add a loop instead of adding the 
 //------------------------------------
 // Triangle Coefficients
 // Triangle 1:

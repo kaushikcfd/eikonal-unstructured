@@ -4,6 +4,7 @@
 #include <queue>
 #include <functional>
 #include <string>
+#include <set>
 #include "Mesh2D.h"
 #include "Node.h"
 
@@ -35,10 +36,16 @@ private:
 
     priority_queue<Node*, vector<Node*>, Compare> narrowBandHeap;/// The heap controlling the narrow band points
 
+    // Private functions
+    float solution(float F, float vx, float vy, float a, float b, float c, float d); // Computes the solution to the quadratic eqn.
+    void scheme(Node* n); /// This is the function which actually loops through all the neighboring elements and computes the value of T.
+    void recompute(Node *n); /// This is the integral function `recompute()`. It shares the name with the same of the previous
+
+
 public:
     EikonalSolver(Mesh2D* _mesh, function<float(float, float)> _F, function<float(float, float)> _v1, function<float(float, float)> _v2);
-    void readInitialFront(string inputFile);
     void plotStates(string outputFile);
+    int solve();
 
 };
 
