@@ -115,10 +115,19 @@ void EikonalSolver::scheme(Node* n) {
     }
     /// Now, we are checking for the column which correctly satisfies all the conditions and its minimum is taken to compute the value of `T`
     float minTime = INF;
+    int indexOfMinElement = -1; // This stores the element corresponding to the minimum.
+
     for(int j = 0; j < noNbgElements; j++ ){
-        if( (solutionStates[j]==2) && (possibleSolutions[j] < minTime) ) // Here we can expect one more condition about cardinality
+        if( (solutionStates[j]==2) && (possibleSolutions[j] < minTime) ) {
+            // Here in the condition, we can expect one more condition about cardinality
             minTime = possibleSolutions[j];
-    }   
+            indexOfMinElement = j;
+        }
+    }
+    if(indexOfMinElement > -1){
+        // This 
+    }
+    
     return ;
 }
 
