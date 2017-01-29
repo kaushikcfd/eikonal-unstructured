@@ -51,6 +51,15 @@ void EikonalSolver::scheme(Node* n) {
 
     noNbgElements = n->getNoOfNbgElements(); // Getting the number of nbg. Elements of the node.
     nbgElements = n->getNbgElements(); // Getting all the information about the nbg. Elements.
+    
+    vector<float> possibleSolutions(noNbgElements, INF);/// This stores the time computed by the solution using that particular element.
+    vector<int> solutionStates(noNbgElements, 0);/// This stores the state of the solution that has been computed using that element. The legend for the solutionStates has been mentioned ahead.
+    /**
+     * `i` is the element from which the solution has been computed.
+     * If possibleSolution[i] == 0 : The solution has the value INF, and must not be used in any computation ahead.
+     * If possibleSolution[i] == 1 : One of the nodes of the element is FAR AWAY and this must not be acepted but the
+     * If possibleSolution[i] == 2: Both the nodes have meaningful value, and this node can be accepted. 
+     */
 
     float m11, m12, m21, m22;
     float x, y, a1 , a2, b1, b2; // Using the notation used by Dahiya & Baskar, Characteristic Fast Marcing Method on Triangular Grids for the generalized eikonal equation in moving media.
@@ -71,13 +80,13 @@ void EikonalSolver::scheme(Node* n) {
     /**Looping through all the Nbg. Elements**/
     for(int j=0; j<noNbgElements; j++) {
         nbgElements[j]->assigningOtherNodes(n, n1, n2); // n1, n2 contains the information about the other two nodes of the element.
-        if((n1->getState() == FAR_AWAY) && (n2->getState() == FAR_AWAY)){
-            // doing nothing Haha..
+        if((n1->getAccept() == NOT_ACCEPTED ) && (n2->getAccept() == NOT_ACCEPTED )){
+            solutionStates[j] = 0; // As the information is not taken from the correct nodes.
         }
-        else if((n1->getState() == ALIVE) && (n2->getState() == FAR_AWAY)) {
+        else if((n1->getAccept() == NOT_ACCEPTED ) && (n2->getAccept() == ACCEPTED )) {
             // compute the value but note down.
         }
-        else if((n1->getState() == FAR_AWAY) && (n2->getState() == ALIVE)) {
+        else if((n1->getAccept() == ACCEPTED ) && (n2->getAccept() == NOT_ACCEPTED )) {
             // compute the value but note down.
         }
         else {
@@ -99,10 +108,17 @@ void EikonalSolver::scheme(Node* n) {
             d =  (((n1->getT())*m21)/((m22*m11 - m12*m21)*(lengthAX))) - (((n2->getT())*m11)/((m22*m11 - m12*m21)*(lengthBX))) ;
 
             t = solution(F, v1, v2, a, b, c, d); /// The solution of the current triangle has been found.
-            // Now push this solution to a meaningful data-structure so that it can be compared with all the other found solutions.
-
+            possibleSolutions[j] = t; // 
+            solutionStates[j] = 2; // State = 2; as everything is perfectly fine!
+            // Here add the cardinality check.
         }
     }
+    /// Now, we are checking for the column which correctly satisfies all the conditions and its minimum is taken to compute the value of `T`
+    float minTime = INF;
+    for(int j = 0; j < noNbgElements; j++ ){
+        if( (solutionStates[j]==2) && (possibleSolutions[j] < minTime) ) // Here we can expect one more condition about cardinality
+            minTime = possibleSolutions[j];
+    }   
     return ;
 }
 
@@ -189,7 +205,6 @@ int EikonalSolver::solve() {
 
     int noNbgElements;
     Element** nbgElements; 
-    float t=0.0;
 
     // Taking the minimum of all the current nodes in the narrow band
     while(!narrowBandHeap.empty()){
