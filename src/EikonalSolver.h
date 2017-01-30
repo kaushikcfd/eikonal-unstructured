@@ -5,6 +5,8 @@
 #include <functional>
 #include <string>
 #include <set>
+#include <queue>
+
 #include "Mesh2D.h"
 #include "Node.h"
 
@@ -40,6 +42,7 @@ private:
     float solution(float F, float vx, float vy, float a, float b, float c, float d); // Computes the solution to the quadratic eqn.
     void scheme(Node* n); /// This is the function which actually loops through all the neighboring elements and computes the value of T.
     void recompute(Node *n); /// This is the integral function `recompute()`. It shares the name with the same of the previous
+    void refreshHeap(); /// This function would help us construct the heap again from scratch.
 
 
 public:

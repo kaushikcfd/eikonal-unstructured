@@ -43,9 +43,33 @@ void EikonalSolver::plotStates(string outputFile="States.dat") {
 }
 
 
+/**
+ * @brief This function is used to refresh the whole heap. This maybe a time consuming process but yes, there is no escaping!
+ */
+void EikonalSolver::refreshHeap() {
+    queue<Node*> q;
+
+    // Populating the queue `q`, with the elements of the narrowBandHeap.
+    while(!narrowBandHeap.empty()){
+        q.push(narrowBandHeap.top());
+        narrowBandHeap.pop();
+    }
+
+    // Now populating the narrowBandHeap, with the queue `q`.
+    while(!q.empty()) {
+        narrowBandHeap.push(q.front());
+        q.pop();
+    }
+
+    // Successfully rearranged the priority queue according to the priorities. Exiting!
+    return ;
+}
 
 void EikonalSolver::scheme(Node* n) {
     int noNbgElements;
+    int initialAccept = n->getAccept(); /// Initial state might be required to know the operations to be performed on the queue.
+    float initialSolution = n->getT();
+
     Element** nbgElements;
     Node *n1=NULL, *n2=NULL;//The other two nodes of the element which is of consideration.
 
@@ -77,6 +101,18 @@ void EikonalSolver::scheme(Node* n) {
     v1 = n->getv1();
     v2 = n->getv2(); 
 
+    /**Getting the parameters to set up the scheme.**/
+    a1 = n1->getX(); a2 = n1->getY();
+    b1 = n2->getX(); b2 = n2->getY();
+
+    lengthAX = sqrt((x-a1)*(x-a1) + (y-a2)*(y-a2));
+    lengthBX = sqrt((x-b1)*(x-b1) + (y-b2)*(y-b2));
+
+    m11 = (x - a1) / lengthAX;
+    m12 = (y - a2) / lengthAX;
+    m21 = (x - b1) / lengthBX;
+    m22 = (x - b2) / lengthBX;
+
     /**Looping through all the Nbg. Elements**/
     for(int j=0; j<noNbgElements; j++) {
         nbgElements[j]->assigningOtherNodes(n, n1, n2); // n1, n2 contains the information about the other two nodes of the element.
@@ -84,33 +120,44 @@ void EikonalSolver::scheme(Node* n) {
             solutionStates[j] = 0; // As the information is not taken from the correct nodes.
         }
         else if((n1->getAccept() == NOT_ACCEPTED ) && (n2->getAccept() != NOT_ACCEPTED )) {
-            // compute the value but note down.
+            a =  - (m12/((m22*m11 - m12*m21)*(lengthBX))) ;
+            b =    (((n2->getT())*m12)/((m22*m11 - m12*m21)*(lengthBX))) ;
+            c =    (m11/((m22*m11 - m12*m21)*(lengthBX))) ;
+            d =  - (((n2->getT())*m11)/((m22*m11 - m12*m21)*(lengthBX))) ;
+            
+            // Solving the quadratic solution as the coefficients are known.
+            t = solution(F, v1, v2, a, b, c, d); /// The solution of the current triangle has been found.
+            possibleSolutions[j] = t; // Noting the solution obtained.
+            
+            // Setting the solution state approppriately.
             solutionStates[j] = 1;
         }
         else if((n1->getAccept() != NOT_ACCEPTED ) && (n2->getAccept() == NOT_ACCEPTED )) {
             // compute the value but note down.
+            a =  (m22/((m22*m11 - m12*m21)*(lengthAX)));                 
+            b = -(((n1->getT())*m22)/((m22*m11 - m12*m21)*(lengthAX)));
+            c = -(m21/((m22*m11 - m12*m21)*(lengthAX)));                
+            d =  (((n1->getT())*m21)/((m22*m11 - m12*m21)*(lengthAX))); 
+            
+            // Calculating the solution to the quadratic equation.
+            t = solution(F, v1, v2, a, b, c, d); /// The solution of the current triangle has been found.
+            possibleSolutions[j] = t; // 
+            
+            // Setting the solution state appropriately 
             solutionStates[j] = 1;
         }
         else {
-
-            a1 = n1->getX(); a2 = n1->getY();
-            b1 = n2->getX(); b2 = n2->getY();
-            
-            lengthAX = sqrt((x-a1)*(x-a1) + (y-a2)*(y-a2));
-            lengthBX = sqrt((x-b1)*(x-b1) + (y-b2)*(y-b2));
-            
-            m11 = (x - a1) / lengthAX;
-            m12 = (y - a2) / lengthAX;
-            m21 = (x - b1) / lengthBX;
-            m22 = (x - b2) / lengthBX;
 
             a =  (m22/((m22*m11 - m12*m21)*(lengthAX)))                - (m12/((m22*m11 - m12*m21)*(lengthBX))) ;
             b = -(((n1->getT())*m22)/((m22*m11 - m12*m21)*(lengthAX))) + (((n2->getT())*m12)/((m22*m11 - m12*m21)*(lengthBX))) ;
             c = -(m21/((m22*m11 - m12*m21)*(lengthAX)))                + (m11/((m22*m11 - m12*m21)*(lengthBX))) ;
             d =  (((n1->getT())*m21)/((m22*m11 - m12*m21)*(lengthAX))) - (((n2->getT())*m11)/((m22*m11 - m12*m21)*(lengthBX))) ;
-
+            
+            // Calculating the solution to the quadratic equation.
             t = solution(F, v1, v2, a, b, c, d); /// The solution of the current triangle has been found.
-            possibleSolutions[j] = t; // 
+            possibleSolutions[j] = t; // Noting down the solution computed using the particular element. 
+            
+            // Setting the solution states with the conditions mentioned alongside.
             if((n1->getAccept() == ACCEPTED ) && (n2->getAccept() == ACCEPTED )) 
                 solutionStates[j] = 2; // State = 2; as everything is perfectly fine!
             else
@@ -130,10 +177,24 @@ void EikonalSolver::scheme(Node* n) {
             indexOfMinElement = j;
         }
     }
+
+    
+
     if(indexOfMinElement > -1){
         // This means that we had one element with the minimum time which satisifies all the conditions and hence it must be accepted.
+        n->updateState(NARROW_BAND); // Adding the node to the Narrow Band 
         n->updateAccept(ACCEPTED);/// Accepting the node.
         n->setT(minTime);/// Updating the `T` of the node.
+    
+        if(initialAccept != ACCEPTED){
+            // Inititally the `Node n` was not a part of the NarrowBand and hence this must be pushed into the narrowBandHeap
+            narrowBandHeap.push(n);  
+        }
+        else {
+            // This must a narrowBand Node, and hence the edits have been done in the heap. Now the heap must be updated to sort once again.
+            if(minTime!=initialSolution)// If the new Solution conicided with the earlier Solution, no need to make changes in the narrowBandHeap.
+                refreshHeap();
+        }
     }
     else {
         /// The node cannot be accepted, but if atleast we could set the `T` value from one of the solutions, even though it may be not accepted, then it is fine.
@@ -143,7 +204,11 @@ void EikonalSolver::scheme(Node* n) {
                 minTime = possibleSolutions[j];
             }
         }
+        n->updateState(NARROW_BAND); // Making the node Narrow_Band
+        n->updateAccept(AMBIGUOUS);
+        n->setT(minTime);
     }
+
     
     return ;
 }
