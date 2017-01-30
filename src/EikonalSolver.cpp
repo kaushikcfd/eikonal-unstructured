@@ -83,11 +83,13 @@ void EikonalSolver::scheme(Node* n) {
         if((n1->getAccept() == NOT_ACCEPTED ) && (n2->getAccept() == NOT_ACCEPTED )){
             solutionStates[j] = 0; // As the information is not taken from the correct nodes.
         }
-        else if((n1->getAccept() == NOT_ACCEPTED ) && (n2->getAccept() == ACCEPTED )) {
+        else if((n1->getAccept() == NOT_ACCEPTED ) && (n2->getAccept() != NOT_ACCEPTED )) {
             // compute the value but note down.
+            solutionStates[j] = 1;
         }
-        else if((n1->getAccept() == ACCEPTED ) && (n2->getAccept() == NOT_ACCEPTED )) {
+        else if((n1->getAccept() != NOT_ACCEPTED ) && (n2->getAccept() == NOT_ACCEPTED )) {
             // compute the value but note down.
+            solutionStates[j] = 1;
         }
         else {
 
@@ -109,8 +111,12 @@ void EikonalSolver::scheme(Node* n) {
 
             t = solution(F, v1, v2, a, b, c, d); /// The solution of the current triangle has been found.
             possibleSolutions[j] = t; // 
-            solutionStates[j] = 2; // State = 2; as everything is perfectly fine!
-            // Here add the cardinality check.
+            if((n1->getAccept() == ACCEPTED ) && (n2->getAccept() == ACCEPTED )) 
+                solutionStates[j] = 2; // State = 2; as everything is perfectly fine!
+            else
+                solutionStates[j] = 1;// One of the node may be AMBIGUOUS and hence this node cannot be directly accepted!
+            
+            // Here add the cardinality check, which may again affect the solutionState[j], Not doing it for now!
         }
     }
     /// Now, we are checking for the column which correctly satisfies all the conditions and its minimum is taken to compute the value of `T`
@@ -125,7 +131,18 @@ void EikonalSolver::scheme(Node* n) {
         }
     }
     if(indexOfMinElement > -1){
-        // This 
+        // This means that we had one element with the minimum time which satisifies all the conditions and hence it must be accepted.
+        n->updateAccept(ACCEPTED);/// Accepting the node.
+        n->setT(minTime);/// Updating the `T` of the node.
+    }
+    else {
+        /// The node cannot be accepted, but if atleast we could set the `T` value from one of the solutions, even though it may be not accepted, then it is fine.
+        for(int j = 0; j < noNbgElements; j++){
+            if( (solutionStates[j]==1) && (possibleSolutions[j] < minTime) ) {
+                // Here in the condition, we can expect one more condition about cardinality
+                minTime = possibleSolutions[j];
+            }
+        }
     }
     
     return ;

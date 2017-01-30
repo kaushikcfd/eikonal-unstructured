@@ -16,7 +16,15 @@
 #define FAR_AWAY 300
 
 #define ACCEPTED 1000
-#define NOT_ACCEPTED 2000
+#define AMBIGUOUS 2000
+#define NOT_ACCEPTED 3000
+
+/**
+ * The different possible accept solutions are explained below:
+ * ACCEPTED: The `T` value is != INF, and the value has come from accepted nodes.
+ * AMBIGUOUS: The `T` value is !=INF, and the value has come from atleast one NOT_ACCEPTET/AMBIGUOUS node(s)
+ * NOT_ACCEPTED: The `T` value is = INF, this is equivalent to a FAR_AWAY node.
+ */ 
 
 using namespace std;
 
