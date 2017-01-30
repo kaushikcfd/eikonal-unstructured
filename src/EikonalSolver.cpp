@@ -20,6 +20,7 @@ EikonalSolver::EikonalSolver(Mesh2D* _mesh, function<float(float, float)> _F, fu
         nodes[i]->setv2(v2(x, y)); // Setting the medium speed (y-direction) for the $i^th$ node.
         if(nodes[i]->getState() == NARROW_BAND)
             narrowBandHeap.push(nodes[i]);
+            nodes[i]->updateAccept(ACCEPTED);
     }
 }
 
@@ -290,7 +291,7 @@ int EikonalSolver::solve() {
 
     Node *n1, *n2; /// The other two nodes of a given neighboring element.
 
-    set<Node*> set_N, set_F; /// The neighboring nodes of the currentNode which are needed to be recomputed are either belonging to NarrowBand or are belonging to Far-Away points.
+    set<Node*> set_new; /// The neighboring nodes of the currentNode which are needed to be recomputed are either belonging to NarrowBand or are belonging to Far-Away points.
     /// If they are belonging to the `set N`  they are pushed into it, and likewise for `set F`.
     /// And at once all the nodes are scanned through these sets and their `T` is recomputed.
 
@@ -310,45 +311,27 @@ int EikonalSolver::solve() {
         nbgElements = currentNode->getNbgElements();
 
         for(int j=0; j<noNbgElements; j++) {
-            nbgElements[j]->assigningOtherNodes(currentNode, n1, n2);
             /// We are currently looping over all the nodes which are the neighboring nodes of THE TOP NODE of the heap.
-
-            // Now, the aim is to bifurcate all the neighboring nodes so that they can be treated separately.  
+            nbgElements[j]->assigningOtherNodes(currentNode, n1, n2);/// n1, n2 now contain the address of the current neighboring element.
             
-            /**Observing the state of `n1` **/
-            if((n1->getState()) == NARROW_BAND){
-                set_N.insert(n1);
-            }
-            else if((n1->getState()) == FAR_AWAY){
-                set_F.insert(n1);
-            }
-
-            /**Observing the state of `n2` **/
-            if((n2->getState()) == NARROW_BAND){
-                set_N.insert(n2);
-            }
-            else if((n2->getState()) == FAR_AWAY){
-                set_F.insert(n1);
-            }            
+            /// Inserting both the nodes into the set_new. They are only inserted into the set_new if they are not ALIVE.
+            if(n1->getState()!=ALIVE)
+                set_new.insert(n1);
+            if(n2->getState()!=ALIVE)
+                set_new.insert(n2);
+        
         } /// Now we have marked out all our nodes which are eligible to be recomputed.
 
-        while(!set_N.empty()){
+        while(!set_new.empty()){
             // Run recompute for each of the Narrow Band points
             // This should update the T which is present in them already
-            Node* n =  *set_N.begin();
+            Node* n =  *set_new.begin();
+            scheme(n);
+            n->updateState(NARROW_BAND);
             // Write the code here to run the re-compute.
-            set_N.erase(set_N.begin());/// As the corresponding node has been filled in with the updated value of T, so now removing it from the set.
+            set_new.erase(set_new.begin());/// As the corresponding node has been filled in with the updated value of T, so now removing it from the set.
         }
 
-        while(!set_F.empty()) {
-            // Main purpose of this loop is to ensure that the node which was initially far away, should now be pushed into the Narrow Band.
-            Node* n = *set_F.begin();
-            // Write the code here to compute the `T` for the node.
-            // First check whether the recompute was successful, only then add the node to the narrow band heap.
-            n->updateState(NARROW_BAND); // Assuming everything went fine.
-
-            set_F.erase(set_F.begin());/// This step should always be there, as the node should always be removed from the Far Away region.
-        }
     }
 
     return 0;
