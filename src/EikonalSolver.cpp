@@ -89,8 +89,18 @@ float EikonalSolver::calculateCharacteristic(float T, Node* n, float a, float b,
     return phi;
 }
 
-bool EikonalSolver::checkCausality(Node *n0, Node *n1, Node *n2, float phi) {
-    bool result = false;
+bool EikonalSolver::checkCausality(Node *n0, float thetaStart, float thetaEnd, float phi) {
+    bool result = false;// Initially initialized to `false` so that it gets toggled once the condition is satisified.
+
+    if(thetaStart > thetaEnd){
+        if(((phi>=thetaStart)&&(phi<360))||((phi>=0)&&(phi<thetaEnd)))
+            result = true;
+    }
+    else {
+        if(((phi>=thetaStart)&&(phi<thetaEnd)))
+            result = true;
+    }
+
     return result;
 }
 
@@ -102,7 +112,7 @@ void EikonalSolver::scheme(Node* n) {
     Element** nbgElements;
     Node *n1=NULL, *n2=NULL;//The other two nodes of the element which is of consideration.
 
-    noNbgElements = n->getNoOfNbgElements(); // Getting the dyber of nbg. Elements of the node.
+    noNbgElements = n->getNoOfNbgElements(); // Getting the number of nbg. Elements of the node.
     nbgElements = n->getNbgElements(); // Getting all the information about the nbg. Elements.
     
     vector<float> possibleSolutions(noNbgElements, INF);/// This stores the time computed by the solution using that particular element.
