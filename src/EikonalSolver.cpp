@@ -66,6 +66,34 @@ void EikonalSolver::refreshHeap() {
     return ;
 }
 
+
+float EikonalSolver::calculateCharacteristic(float T, Node* n, float a, float b, float c, float d){
+    float phi = 0.0;
+
+    // Collecting information about the given node.
+    float F = n->getF();
+    float v1 = n->getv1();
+    float v2 = n->getv2();
+
+    // Calculating the parameter `G` mentioned in the paper.
+    float G = 1 - v1 * (a*T + b) - v2 * (c*T + d);
+    
+    // Calculating the dyerator and the dxomiator of dy/dx.
+    float dy = F * F * (c*T + d) + v2 * G;
+    float dx = F * F * (a*T + b) + v1 * G;
+
+    phi = atan2(dy, dx)*(180.0/3.1415926);// Converted the angle from radians to degrees.
+    if(phi<0)// Changing the range of phi from (-180, 180] to [0. 360).
+        phi+=360;
+    
+    return phi;
+}
+
+bool EikonalSolver::checkCausality(Node *n0, Node *n1, Node *n2, float phi) {
+    bool result = false;
+    return result;
+}
+
 void EikonalSolver::scheme(Node* n) {
     int noNbgElements;
     int initialAccept = n->getAccept(); /// Initial state might be required to know the operations to be performed on the queue.
@@ -74,7 +102,7 @@ void EikonalSolver::scheme(Node* n) {
     Element** nbgElements;
     Node *n1=NULL, *n2=NULL;//The other two nodes of the element which is of consideration.
 
-    noNbgElements = n->getNoOfNbgElements(); // Getting the number of nbg. Elements of the node.
+    noNbgElements = n->getNoOfNbgElements(); // Getting the dyber of nbg. Elements of the node.
     nbgElements = n->getNbgElements(); // Getting all the information about the nbg. Elements.
     
     vector<float> possibleSolutions(noNbgElements, INF);/// This stores the time computed by the solution using that particular element.

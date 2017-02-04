@@ -6,6 +6,7 @@
 #include <string>
 #include <set>
 #include <queue>
+#include <cmath>
 
 #include "Mesh2D.h"
 #include "Node.h"
@@ -43,7 +44,8 @@ private:
     void scheme(Node* n); /// This is the function which actually loops through all the neighboring elements and computes the value of T.
     void recompute(Node *n); /// This is the integral function `recompute()`. It shares the name with the same of the previous
     void refreshHeap(); /// This function would help us construct the heap again from scratch.
-
+    float calculateCharacteristic(float T, Node* n, float a, float b, float c, float d);/// This is the function which calculates the causality direction, which is represented as Phi in the paper of reference.
+    bool checkCausality(Node *n0, Node *n1, Node* n2, float phi);/// This is the function which tests whether the causality conditions is met. 
 
 public:
     EikonalSolver(Mesh2D* _mesh, function<float(float, float)> _F, function<float(float, float)> _v1, function<float(float, float)> _v2);
