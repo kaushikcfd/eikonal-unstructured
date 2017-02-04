@@ -91,6 +91,13 @@ float EikonalSolver::calculateCharacteristic(float T, Node* n, float a, float b,
 
 bool EikonalSolver::checkCausality(Node *n0, float thetaStart, float thetaEnd, float phi) {
     bool result = false;// Initially initialized to `false` so that it gets toggled once the condition is satisified.
+    
+    // `phi` is the angle which is the characteristic direction. We need to check the element for if the negative of the
+    // characteristic direction lies in the bounds of the given element.
+    
+    phi+=180;// This gives no problems if the angle is contained within the first 2 quadrants.
+    if(phi>=360)
+        phi-=360;// This preserved the angle made by the negative of the characteristic angle.
 
     if(thetaStart > thetaEnd){
         if(((phi>=thetaStart)&&(phi<360))||((phi>=0)&&(phi<thetaEnd)))
@@ -119,13 +126,11 @@ void EikonalSolver::scheme(Node* n) {
     nbgElements = n->getNbgElements(); // Getting all the information about the nbg. Elements.
     
     vector<float> possibleSolutions(noNbgElements, INF);/// This stores the time computed by the solution using that particular element.
-    vector<int> solutionStates(noNbgElements, 0);/// This stores the state of the solution that has been computed using that element. The legend for the solutionStates has been mentioned ahead.
-    /**
-     * `i` is the element from which the solution has been computed.
-     * If possibleSolution[i] == 0 : The solution has the value INF, and must not be used in any computation ahead.
-     * If possibleSolution[i] == 1 : One of the nodes of the element is FAR AWAY and this must not be acepted but the
-     * If possibleSolution[i] == 2: Both the nodes have meaningful value, and this node can be accepted. 
-     */
+    
+    vector<bool> calculationIndicator(noNbgElements, false); /// This indicator turns true when a solution is calculated.
+    vector<bool> acceptanceIndicator(noNbgElements, false);/// This is an array which stores the information, whether the solution which is arising from the neighboring solution is coming only from accepted nodes.
+    vector<bool> causalityIndicator(noNbgElements, false);/// This is the array which stores the information, about whether the characterisitic angle is arising from this direction.
+    
 
     float m11, m12, m21, m22;
     float x, y, a1 , a2, b1, b2; // Using the notation used by Dahiya & Baskar, Characteristic Fast Marcing Method on Triangular Grids for the generalized eikonal equation in moving media.
@@ -159,7 +164,11 @@ void EikonalSolver::scheme(Node* n) {
     for(int j=0; j<noNbgElements; j++) {
         nbgElements[j]->assigningOtherNodes(n, n1, n2); // n1, n2 contains the information about the other two nodes of the element.
         if((n1->getAccept() == NOT_ACCEPTED ) && (n2->getAccept() == NOT_ACCEPTED )){
-            solutionStates[j] = 0; // As the information is not taken from the correct nodes.
+           // This means both the nodes have their `T` value as `inf`, hence solution cannot be calculated. 
+           // So, making all the indicators as FALSE.
+           calculationIndicator[j] = false; // Since, no solution is calculated.
+           acceptanceIndicator[j] = false; // Since, both of the nodes around are not accepted.
+           causalityIndicator[j] = false; // Obviously, since no characteristic direction has been calculated.           
         }
         else if((n1->getAccept() == NOT_ACCEPTED ) && (n2->getAccept() != NOT_ACCEPTED )) {
             a =  - (m12/((m22*m11 - m12*m21)*(lengthBX))) ;
@@ -171,8 +180,20 @@ void EikonalSolver::scheme(Node* n) {
             t = solution(F, v1, v2, a, b, c, d); /// The solution of the current triangle has been found.
             possibleSolutions[j] = t; // Noting the solution obtained.
             
-            // Setting the solution state approppriately.
-            solutionStates[j] = 1;
+            // Calculating the characteristic angle arising due to the solution.
+            phi = calculateCharacteristic(t, n, a, b, c, d);
+
+           // Assigning the values to thetaStart and thetaEnd.
+           
+            thetaStart = nbgThetaStart[j];
+            thetaEnd = nbgThetaEnd[j];
+            
+
+            // Assigning the indicators appropriately.
+            calculationIndicator[j] = true; // As we have some finite value of `T` stored here.
+            acceptanceIndicator[j] = false; // Obviously as one of the solutions is coming from FAR_AWAY node.
+            causalityIndicator[j] = checkCausality(n, thetaStart, thetaEnd, phi);
+
         }
         else if((n1->getAccept() != NOT_ACCEPTED ) && (n2->getAccept() == NOT_ACCEPTED )) {
             // compute the value but note down.
@@ -180,13 +201,27 @@ void EikonalSolver::scheme(Node* n) {
             b = -(((n1->getT())*m22)/((m22*m11 - m12*m21)*(lengthAX)));
             c = -(m21/((m22*m11 - m12*m21)*(lengthAX)));                
             d =  (((n1->getT())*m21)/((m22*m11 - m12*m21)*(lengthAX))); 
-            
-            // Calculating the solution to the quadratic equation.
+
+
+            // Solving the quadratic solution as the coefficients are known.
             t = solution(F, v1, v2, a, b, c, d); /// The solution of the current triangle has been found.
-            possibleSolutions[j] = t; // 
+            possibleSolutions[j] = t; // Noting the solution obtained.
             
-            // Setting the solution state appropriately 
-            solutionStates[j] = 1;
+            // Calculating the characteristic angle arising due to the solution.
+            phi = calculateCharacteristic(t, n, a, b, c, d);
+
+           // Assigning the values to thetaStart and thetaEnd.
+           
+            thetaStart = nbgThetaStart[j];
+            thetaEnd = nbgThetaEnd[j];
+            
+
+            // Assigning the indicators appropriately.
+            calculationIndicator[j] = true; // As we have some finite value of `T` stored here.
+            acceptanceIndicator[j] = false; // Obviously as one of the solutions is coming from FAR_AWAY node.
+            causalityIndicator[j] = checkCausality(n, thetaStart, thetaEnd, phi);
+
+            
         }
         else {
 
@@ -194,23 +229,32 @@ void EikonalSolver::scheme(Node* n) {
             b = -(((n1->getT())*m22)/((m22*m11 - m12*m21)*(lengthAX))) + (((n2->getT())*m12)/((m22*m11 - m12*m21)*(lengthBX))) ;
             c = -(m21/((m22*m11 - m12*m21)*(lengthAX)))                + (m11/((m22*m11 - m12*m21)*(lengthBX))) ;
             d =  (((n1->getT())*m21)/((m22*m11 - m12*m21)*(lengthAX))) - (((n2->getT())*m11)/((m22*m11 - m12*m21)*(lengthBX))) ;
-            
-            // Calculating the solution to the quadratic equation.
-            t = solution(F, v1, v2, a, b, c, d); /// The solution of the current triangle has been found.
-            possibleSolutions[j] = t; // Noting down the solution computed using the particular element. 
-            
-            // Setting the solution states with the conditions mentioned alongside.
-            if((n1->getAccept() == ACCEPTED ) && (n2->getAccept() == ACCEPTED )) 
-                solutionStates[j] = 2; // State = 2; as everything is perfectly fine!
-            else
-                solutionStates[j] = 1;// One of the node may be AMBIGUOUS and hence this node cannot be directly accepted!
-            
 
+
+            // Solving the quadratic solution as the coefficients are known.
+            t = solution(F, v1, v2, a, b, c, d); /// The solution of the current triangle has been found.
+            possibleSolutions[j] = t; // Noting the solution obtained.
+            
+            // Calculating the characteristic angle arising due to the solution.
+            phi = calculateCharacteristic(t, n, a, b, c, d);
+
+           // Assigning the values to thetaStart and thetaEnd.
+           
             thetaStart = nbgThetaStart[j];
             thetaEnd = nbgThetaEnd[j];
-            phi = calculateCharacteristic(t, n, a, b, c, d);
+
+            // Assigning the indicators appropriately.
+            calculationIndicator[j] = true; // As we have some finite value of `T` stored here.
             
-            checkCausality(n, thetaStart, thetaEnd, phi);
+            // Setting the acceptance indicator using the below if-else condition. 
+            // The node is marked `true` for acceptanceIndicator iff both the neighboring nodes are accepted.
+            if((n1->getAccept() == ACCEPTED ) && (n2->getAccept() == ACCEPTED ))
+                acceptanceIndicator[j] = true;
+            else
+                acceptanceIndicator[j] = false;
+            
+            causalityIndicator[j] = checkCausality(n, thetaStart, thetaEnd, phi);// Using the function to check the causality condition.
+            
                         
             
         }
@@ -220,8 +264,8 @@ void EikonalSolver::scheme(Node* n) {
     int indexOfMinElement = -1; // This stores the element corresponding to the minimum.
 
     for(int j = 0; j < noNbgElements; j++ ){
-        if( (solutionStates[j]==2) && (possibleSolutions[j] < minTime) ) {
-            // Here in the condition, we can expect one more condition about cardinality
+        if( (acceptanceIndicator[j] == true) && (causalityIndicator[j] == true) && (possibleSolutions[j] < minTime) ) {
+            // These statements will be entered only if both the neighboring nodes are ac
             minTime = possibleSolutions[j];
             indexOfMinElement = j;
         }
@@ -231,7 +275,6 @@ void EikonalSolver::scheme(Node* n) {
 
     if(indexOfMinElement > -1){
         // This means that we had one element with the minimum time which satisifies all the conditions and hence it must be accepted.
-        n->updateState(NARROW_BAND); // Adding the node to the Narrow Band 
         n->updateAccept(ACCEPTED);/// Accepting the node.
         n->setT(minTime);/// Updating the `T` of the node.
     
@@ -248,12 +291,11 @@ void EikonalSolver::scheme(Node* n) {
     else {
         /// The node cannot be accepted, but if atleast we could set the `T` value from one of the solutions, even though it may be not accepted, then it is fine.
         for(int j = 0; j < noNbgElements; j++){
-            if( (solutionStates[j]==1) && (possibleSolutions[j] < minTime) ) {
+            if( (possibleSolutions[j] < minTime) ) {// WARNING: WE NEED SOME CONDITION HERE. ASK Baskar Sir.
                 // Here in the condition, we can expect one more condition about cardinality
                 minTime = possibleSolutions[j];
             }
         }
-        n->updateState(NARROW_BAND); // Making the node Narrow_Band
         n->updateAccept(AMBIGUOUS);
         n->setT(minTime);
     }
