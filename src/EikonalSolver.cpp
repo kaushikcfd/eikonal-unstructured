@@ -111,6 +111,9 @@ void EikonalSolver::scheme(Node* n) {
 
     Element** nbgElements;
     Node *n1=NULL, *n2=NULL;//The other two nodes of the element which is of consideration.
+    float *nbgThetaStart = n->getNbgThetaStart(), *nbgThetaEnd = n->getNbgThetaEnd(); // Initialized the arrays with the neighboring thetaStart and thetaEnd, which is the major advantage of self-writen library for mesh interpretation.
+    float thetaStart, thetaEnd;
+    float phi; // This is the variable which would be used for storing the characteristic angle.
 
     noNbgElements = n->getNoOfNbgElements(); // Getting the number of nbg. Elements of the node.
     nbgElements = n->getNbgElements(); // Getting all the information about the nbg. Elements.
@@ -202,7 +205,14 @@ void EikonalSolver::scheme(Node* n) {
             else
                 solutionStates[j] = 1;// One of the node may be AMBIGUOUS and hence this node cannot be directly accepted!
             
-            // Here add the cardinality check, which may again affect the solutionState[j], Not doing it for now!
+
+            thetaStart = nbgThetaStart[j];
+            thetaEnd = nbgThetaEnd[j];
+            phi = calculateCharacteristic(t, n, a, b, c, d);
+            
+            checkCausality(n, thetaStart, thetaEnd, phi);
+                        
+            
         }
     }
     /// Now, we are checking for the column which correctly satisfies all the conditions and its minimum is taken to compute the value of `T`
