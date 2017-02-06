@@ -67,7 +67,7 @@ void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
 		if(isAlive(nodes[i])){
 			nodes[i]->updateState(ALIVE);// Updated the state
 			nodes[i]->setT(0.0);// Update the time to be zero ;-)
-			nodes[i]->updateAccept(ACCEPTED);			              
+			nodes[i]->updateAccept(ACCEPTED);// Marking this as ACCEPTED, as all the nodes as the nodes have meaningful values, as demanded by the boundary conditions.
             //---Now, adding the neighbouring nodes of the Alive nodes to the narrow band.
             noNbgElements = nodes[i]->getNoOfNbgElements();
             nbgElements = nodes[i]->getNbgElements();

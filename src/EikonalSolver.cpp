@@ -20,7 +20,7 @@ EikonalSolver::EikonalSolver(Mesh2D* _mesh, function<float(float, float)> _F, fu
         nodes[i]->setv2(v2(x, y)); // Setting the medium speed (y-direction) for the $i^th$ node.
         if(nodes[i]->getState() == NARROW_BAND)
             narrowBandHeap.push(nodes[i]);
-            nodes[i]->updateAccept(ACCEPTED);
+            nodes[i]->updateAccept(ACCEPTED); // This is the condition which is demanded from the boundary condition.
     }
 }
 
@@ -381,9 +381,7 @@ int EikonalSolver::solve() {
 
     Node *n1, *n2; /// The other two nodes of a given neighboring element.
 
-    set<Node*> set_new; /// The neighboring nodes of the currentNode which are needed to be recomputed are either belonging to NarrowBand or are belonging to Far-Away points.
-    /// If they are belonging to the `set N`  they are pushed into it, and likewise for `set F`.
-    /// And at once all the nodes are scanned through these sets and their `T` is recomputed.
+    set<Node*> set_new; /// The neighboring nodes of the currentNode which are needed to be recomputed are either belonging to NarrowBand or are belonging to Far-Away points, and at once all the nodes are scanned through these sets and their `T` is recomputed.
 
     int noNbgElements;
     Element** nbgElements; 
