@@ -16,6 +16,7 @@
  */
 float waveSpeed(float x, float y) {
     return 1.0;
+    //return (2 - 0.5*(cos(3.1415926*(y-0.5))*cos(3.1415926*(y-0.5))));
 }
 
 /**
@@ -71,7 +72,6 @@ void setAlivePoints(Mesh2D* mesh, function<bool(Node*)> isAlive) {
             //---Now, adding the neighbouring nodes of the Alive nodes to the narrow band.
             noNbgElements = nodes[i]->getNoOfNbgElements();
             nbgElements = nodes[i]->getNbgElements();
-            
 
             //---Bad design-- see if you can do better :(.
             // ^About the x,y which is being used. Rest everything is fine. 
@@ -113,10 +113,11 @@ int main() {
     /*Creating and allocating memory to `solver`*/
     EikonalSolver* solver;
     solver = new EikonalSolver(mesh, waveSpeed, mediumSpeed1, mediumSpeed2);
-
+    
+    solver->solve();
 
     /*Plotting the current state of the solver*/
-    solver->plotStates("States.dat");
+    solver->plotStates("../Debug/debugStates/States2.dat");
     
     return 0;
 }

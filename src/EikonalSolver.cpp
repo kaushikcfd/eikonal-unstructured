@@ -18,10 +18,30 @@ EikonalSolver::EikonalSolver(Mesh2D* _mesh, function<float(float, float)> _F, fu
         nodes[i]->setF(F(x, y)); // Setting the wave speed for the $i^th$ node.
         nodes[i]->setv1(v1(x, y)); // Setting the medium speed (x-direction) for the $i^th$ node.
         nodes[i]->setv2(v2(x, y)); // Setting the medium speed (y-direction) for the $i^th$ node.
-        if(nodes[i]->getState() == NARROW_BAND)
+        if(nodes[i]->getState() == NARROW_BAND){
             narrowBandHeap.push(nodes[i]);
             nodes[i]->updateAccept(ACCEPTED); // This is the condition which is demanded from the boundary condition.
+        }
+        if(x == 0.5){
+            y_cord.push_back(y);
+            v_cord.push_back(nodes[i]->getF());
+        }
     }
+}
+
+void EikonalSolver::checkWaveSpeed() {
+    FILE* pFile = freopen("../Debug/debugVelocity/waveSpeedCheck2.dat", "w", stdout);
+    
+    fprintf(pFile, "%ld\n", v_cord.size()); // Printing the size for the pythonn program.
+
+    long int n = v_cord.size();
+    for(int i=0; i<n; i++){
+        fprintf(pFile, "%6.3f\t%6.3f\n", y_cord[i], v_cord[i]);
+    }
+
+
+    fclose(pFile);
+    return ;
 }
 
 void EikonalSolver::plotStates(string outputFile="States.dat") {
@@ -100,11 +120,11 @@ bool EikonalSolver::checkCausality(Node *n0, float thetaStart, float thetaEnd, f
         phi-=360;// This preserved the angle made by the negative of the characteristic angle.
 
     if(thetaStart > thetaEnd){
-        if(((phi>=thetaStart)&&(phi<360))||((phi>=0)&&(phi<thetaEnd)))
+        if(((phi>=thetaStart)&&(phi<360))||((phi>=0)&&(phi<=thetaEnd)))
             result = true;
     }
     else {
-        if(((phi>=thetaStart)&&(phi<thetaEnd)))
+        if(((phi>=thetaStart)&&(phi<=thetaEnd)))
             result = true;
     }
 
@@ -119,7 +139,7 @@ void EikonalSolver::scheme(Node* n) {
     Element** nbgElements;
     Node *n1=NULL, *n2=NULL;//The other two nodes of the element which is of consideration.
     float *nbgThetaStart = n->getNbgThetaStart(), *nbgThetaEnd = n->getNbgThetaEnd(); // Initialized the arrays with the neighboring thetaStart and thetaEnd, which is the major advantage of self-writen library for mesh interpretation.
-    float thetaStart, thetaEnd;
+    float thetaStart, thetaEnd;// These will be the temporary variables which would used. No specific other importance.
     float phi; // This is the variable which would be used for storing the characteristic angle.
 
     noNbgElements = n->getNoOfNbgElements(); // Getting the number of nbg. Elements of the node.
@@ -148,21 +168,22 @@ void EikonalSolver::scheme(Node* n) {
     v1 = n->getv1();
     v2 = n->getv2(); 
 
-    /**Getting the parameters to set up the scheme.**/
-    a1 = n1->getX(); a2 = n1->getY();
-    b1 = n2->getX(); b2 = n2->getY();
-
-    lengthAX = sqrt((x-a1)*(x-a1) + (y-a2)*(y-a2));
-    lengthBX = sqrt((x-b1)*(x-b1) + (y-b2)*(y-b2));
-
-    m11 = (x - a1) / lengthAX;
-    m12 = (y - a2) / lengthAX;
-    m21 = (x - b1) / lengthBX;
-    m22 = (x - b2) / lengthBX;
-
     /**Looping through all the Nbg. Elements**/
     for(int j=0; j<noNbgElements; j++) {
         nbgElements[j]->assigningOtherNodes(n, n1, n2); // n1, n2 contains the information about the other two nodes of the element.
+
+        /**Getting the parameters to set up the scheme.**/
+        a1 = n1->getX(); a2 = n1->getY();
+        b1 = n2->getX(); b2 = n2->getY();
+
+        lengthAX = sqrt((x-a1)*(x-a1) + (y-a2)*(y-a2));
+        lengthBX = sqrt((x-b1)*(x-b1) + (y-b2)*(y-b2));
+
+        m11 = (x - a1) / lengthAX;
+        m12 = (y - a2) / lengthAX;
+        m21 = (x - b1) / lengthBX;
+        m22 = (x - b2) / lengthBX;
+
         if((n1->getAccept() == NOT_ACCEPTED ) && (n2->getAccept() == NOT_ACCEPTED )){
            // This means both the nodes have their `T` value as `inf`, hence solution cannot be calculated. 
            // So, making all the indicators as FALSE.
@@ -253,10 +274,7 @@ void EikonalSolver::scheme(Node* n) {
             else
                 acceptanceIndicator[j] = false;
             
-            causalityIndicator[j] = checkCausality(n, thetaStart, thetaEnd, phi);// Using the function to check the causality condition.
-            
-                        
-            
+            causalityIndicator[j] = checkCausality(n, thetaStart, thetaEnd, phi);// Using the function to check the causality condition.          
         }
     }
     /// Now, we are checking for the column which correctly satisfies all the conditions and its minimum is taken to compute the value of `T`
@@ -301,17 +319,6 @@ void EikonalSolver::scheme(Node* n) {
     }
 
     
-    return ;
-}
-
-/**
- * @brief This is the function which calls the schemeF(), and returns the computed new time. This calls the functions scheme, and does most of the computations
- * @param n The `Node* n` contains the address of the node whose arrival time has to be computed.
- */
-
-void EikonalSolver::recompute(Node* n) {
-
-
     return ;
 }
 
@@ -376,6 +383,7 @@ float EikonalSolver::solution(float F, float vx, float vy, float a, float b, flo
  */
 
 int EikonalSolver::solve() {
+    checkWaveSpeed(); // This is just pure debugging, no other intention.
 
     Node* currentNode;/// This is the node which currently has the minimum arrival time in the given heap.
 
@@ -395,6 +403,10 @@ int EikonalSolver::solve() {
 
         currentNode->updateState(ALIVE);/// Marking the node as alive.
         
+        /**This is just for debugging.**/
+        fprintf(stderr, "The node at (%.3f, %.3f) is made Alive, with the new time %.3f\n", currentNode->getX(), currentNode->getY(), currentNode->getT());
+        /**Again entering the actual code.**/
+        
         noNbgElements = currentNode->getNoOfNbgElements();
         nbgElements = currentNode->getNbgElements();
 
@@ -409,6 +421,7 @@ int EikonalSolver::solve() {
                 set_new.insert(n2);
         
         } /// Now we have marked out all our nodes which are eligible to be recomputed.
+        
 
         while(!set_new.empty()){
             // Run recompute for each of the Narrow Band points

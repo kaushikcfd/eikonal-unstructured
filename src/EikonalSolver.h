@@ -38,11 +38,15 @@ private:
     function<float(float, float)> v2; /// The medium speed in the y-direction
 
     priority_queue<Node*, vector<Node*>, Compare> narrowBandHeap;/// The heap controlling the narrow band points
+    
+    // Debugging data-structures
+    vector<float> y_cord, v_cord;// This will be used to check the value of the wavespeed that will be assigned.
+    // Debuggin functions
+    void checkWaveSpeed();// This will print the wavespeed values to a file.
 
     // Private functions
     float solution(float F, float vx, float vy, float a, float b, float c, float d); // Computes the solution to the quadratic eqn.
     void scheme(Node* n); /// This is the function which actually loops through all the neighboring elements and computes the value of T.
-    void recompute(Node *n); /// This is the integral function `recompute()`. It shares the name with the same of the previous
     void refreshHeap(); /// This function would help us construct the heap again from scratch.
     float calculateCharacteristic(float T, Node* n, float a, float b, float c, float d);/// This is the function which calculates the causality direction, which is represented as Phi in the paper of reference.
     bool checkCausality(Node *n0, float thetaStart, float thetaEnd, float phi);/// This is the function which tests whether the causality conditions is met. 
