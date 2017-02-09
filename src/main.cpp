@@ -6,7 +6,7 @@
  */
 
 #include "main.h"
-#define FILE_PATH "square-structured.msh"
+#define FILE_PATH "../Grids/square-unstructured.msh"
 
 /**
  * This function serves as an input function for wave speed. In all the papers this is denoted as `F(x, y)`

@@ -303,7 +303,10 @@ void EikonalSolver::scheme(Node* n) {
         else {
             // This must a narrowBand Node, and hence the edits have been done in the heap. Now the heap must be updated to sort once again.
             if(minTime!=initialSolution)// If the new Solution conicided with the earlier Solution, no need to make changes in the narrowBandHeap.
+            {
+                fprintf(stderr, "Entering refreshHeap for the node at (%.4f, %.4f). The earlier time was %.4f\n", x, y, initialSolution);// Adding this for debugging purposes.
                 refreshHeap();
+            }
         }
     }
     else {
@@ -315,6 +318,10 @@ void EikonalSolver::scheme(Node* n) {
             }
         }
         n->updateAccept(AMBIGUOUS);
+        if(n->getTimesRecomputed() == 3){
+            n->updateAccept(ACCEPTED);
+            narrowBandHeap.push(n);
+        }
         n->setT(minTime);
     }
 
@@ -404,7 +411,7 @@ int EikonalSolver::solve() {
         currentNode->updateState(ALIVE);/// Marking the node as alive.
         
         /**This is just for debugging.**/
-        fprintf(stderr, "The node at (%.3f, %.3f) is made Alive, with the new time %.3f\n", currentNode->getX(), currentNode->getY(), currentNode->getT());
+        fprintf(stderr, "The node at (%.4f, %.4f) is made Alive, with the new time %.4f\n", currentNode->getX(), currentNode->getY(), currentNode->getT());
         /**Again entering the actual code.**/
         
         noNbgElements = currentNode->getNoOfNbgElements();

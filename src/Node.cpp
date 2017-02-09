@@ -21,6 +21,8 @@ Node::Node() {
     F = 0.0 ; // Initializing the wave speed to be zero
     v1 = 0.0 ; // Initializing
     v2 = 0.0 ; // Initalizing
+
+    timesRecomputed = 0; // Initializing to `0` becuase initially the compute is not run even once.
 }
 
 void Node::updateCoords( float _x, float _y) {
@@ -57,6 +59,7 @@ void Node::updateState(int _state) {
 
 void Node::updateAccept(int _accept) {
     tagAccept = _accept;
+    timesRecomputed++;
 }
 
 
@@ -160,6 +163,9 @@ int Node::getAccept(){
 	return tagAccept;
 }
 
+int Node::getTimesRecomputed(){
+    return timesRecomputed;
+}
 
 // Destructor definition
 Node::~Node() {

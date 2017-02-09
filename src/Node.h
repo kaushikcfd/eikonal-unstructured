@@ -48,6 +48,8 @@ private:
     float v1; /// The medium speed in the x-direction 
     float v2; /// The medium speed in the y-direction
 
+    int timesRecomputed; /// This variable stores the number of times a variables value is recomputed.
+
 public:
     // Constructor
     Node();
@@ -90,6 +92,7 @@ public:
     // Getting the tags i.e. tagState & tagAccept
     int getState();
     int getAccept();
+    int getTimesRecomputed();
 
     // Destructor
     ~Node();
