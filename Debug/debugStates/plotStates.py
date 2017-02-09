@@ -32,15 +32,15 @@ plt.xlabel('X')
 plt.ylabel('Y')
 
 i = 0
-with open('States2.dat', 'r') as f:
+with open('latest.dat', 'r') as f:
     for i in range(noNodes):
         state = map(int, f.readline().strip().split())
         if(state[0]==0):
-            al = plt.scatter(x[i], y[i], color='green', marker='s', s=80)
+            al = plt.scatter(x[i], y[i], color='green', marker='s', s=40)
         elif(state[0]==1):
-            nb = plt.scatter(x[i], y[i], color='blue', marker='o', s=80)
+            nb = plt.scatter(x[i], y[i], color='blue', marker='o', s=40)
         else:
-            far = plt.scatter(x[i], y[i], color='red', marker='d', s=50)
+            far = plt.scatter(x[i], y[i], color='red', marker='d', s=40)
 
 plt.legend((al, nb, far), ('Alive($\mathcal{A}$)', 'Narrow-Band($\mathcal{N}$)', 'Far-Away($\mathcal{F}$)'), scatterpoints=1, loc='upper right', fontsize=8)
 plt.show()

@@ -1,4 +1,7 @@
 #include "EikonalSolver.h"
+#include <string>
+
+using namespace std;
 
 
 EikonalSolver::EikonalSolver(Mesh2D* _mesh, function<float(float, float)> _F, function<float(float, float)> _v1, function<float(float, float)> _v2) {
@@ -30,37 +33,36 @@ EikonalSolver::EikonalSolver(Mesh2D* _mesh, function<float(float, float)> _F, fu
 }
 
 void EikonalSolver::checkWaveSpeed() {
-    FILE* pFile = freopen("../Debug/debugVelocity/waveSpeedCheck2.dat", "w", stdout);
-    
-    fprintf(pFile, "%ld\n", v_cord.size()); // Printing the size for the pythonn program.
+    ofstream pFile;
+    pFile.open("../Debug/debugVelocity/waveSpeedCheck2.dat");
+    pFile << v_cord.size() << "\n"; // Printing the size for the pythonn program.
 
     long int n = v_cord.size();
     for(int i=0; i<n; i++){
-        fprintf(pFile, "%6.3f\t%6.3f\n", y_cord[i], v_cord[i]);
+        pFile <<  y_cord[i]<<"\t"<<  v_cord[i]<<"\n";
     }
 
-
-    fclose(pFile);
+    pFile.close();
     return ;
 }
 
-void EikonalSolver::plotStates(string outputFile="States.dat") {
-    FILE* pFile;
-    pFile = freopen(outputFile.c_str(), "w", stdout);
+void EikonalSolver::plotStates(string outputFile) {
+    ofstream pFile;
+    pFile.open(outputFile);
     Node** nodes = mesh->nodes;
     int noNodes = mesh->getNoOfNodes();
     for( int i = 0; i < noNodes; i++) {
         if((nodes[i]->getState())==ALIVE){
-            fprintf(pFile, "%d\n", 0);
+            pFile << "0\n";
         }
         else if((nodes[i]->getState())==NARROW_BAND){
-            fprintf(pFile, "%d\n", 1);
+            pFile << "1\n";
         }
         else{
-            fprintf(pFile, "%d\n", 2);
+            pFile << "2\n";
         }
     }
-    fclose(pFile);
+    pFile.close();
 }
 
 
@@ -312,20 +314,18 @@ void EikonalSolver::scheme(Node* n) {
     else {
         /// The node cannot be accepted, but if atleast we could set the `T` value from one of the solutions, even though it may be not accepted, then it is fine.
         for(int j = 0; j < noNbgElements; j++){
-            if( (possibleSolutions[j] < minTime) ) {// WARNING: WE NEED SOME CONDITION HERE. ASK Baskar Sir.
-                // Here in the condition, we can expect one more condition about cardinality
+            if( (possibleSolutions[j] < minTime) ) {
                 minTime = possibleSolutions[j];
             }
         }
+       
         n->updateAccept(AMBIGUOUS);
-        if(n->getTimesRecomputed() == 3){
+        if(n->getTimesRecomputed() > (0.5*noNbgElements)){
             n->updateAccept(ACCEPTED);
             narrowBandHeap.push(n);
         }
         n->setT(minTime);
     }
-
-    
     return ;
 }
 
@@ -400,10 +400,17 @@ int EikonalSolver::solve() {
 
     int noNbgElements;
     Element** nbgElements; 
+    
+    int counter = 0;// This is a debugging variable feel free to remove it once the debugging is done.
+    string fileName;
 
-    // Taking the minimum of all the current nodes in the narrow band
     while(!narrowBandHeap.empty()){
+        fileName = "Data/States" + to_string(counter) + ".dat";
+        plotStates(fileName);
+        counter++;
 
+
+        
         currentNode = narrowBandHeap.top();// Now it is ensured that the node with the minimum is considered.
 
         narrowBandHeap.pop(); // Removed from the heap.

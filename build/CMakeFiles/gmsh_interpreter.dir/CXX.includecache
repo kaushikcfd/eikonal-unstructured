@@ -6,11 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/home/kaushik/MyStuff/eikonal-unstructured/src/EikonalSolver.cpp
+/home/kaushik/Dropbox/eikonal-unstructured/src/EikonalSolver.cpp
 EikonalSolver.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/EikonalSolver.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/EikonalSolver.h
+string
+-
 
-/home/kaushik/MyStuff/eikonal-unstructured/src/EikonalSolver.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/EikonalSolver.h
 queue
 -
 functional
@@ -23,28 +25,34 @@ queue
 -
 cmath
 -
+cstdlib
+-
+sstream
+-
+fstream
+-
 Mesh2D.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/Mesh2D.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Mesh2D.h
 Node.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/Node.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Node.h
 
-/home/kaushik/MyStuff/eikonal-unstructured/src/Element.cpp
+/home/kaushik/Dropbox/eikonal-unstructured/src/Element.cpp
 Element.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/Element.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Element.h
 Node.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/Node.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Node.h
 cstdio
 -
 
-/home/kaushik/MyStuff/eikonal-unstructured/src/Element.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Element.h
 iostream
 -
 
-/home/kaushik/MyStuff/eikonal-unstructured/src/Mesh2D.cpp
+/home/kaushik/Dropbox/eikonal-unstructured/src/Mesh2D.cpp
 Mesh2D.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/Mesh2D.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Mesh2D.h
 
-/home/kaushik/MyStuff/eikonal-unstructured/src/Mesh2D.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Mesh2D.h
 string
 -
 vector
@@ -64,21 +72,21 @@ string
 cstring
 -
 Node.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/Node.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Node.h
 Element.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/Element.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Element.h
 
-/home/kaushik/MyStuff/eikonal-unstructured/src/Node.cpp
+/home/kaushik/Dropbox/eikonal-unstructured/src/Node.cpp
 Node.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/Node.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Node.h
 cmath
 -
 algorithm
 -
 
-/home/kaushik/MyStuff/eikonal-unstructured/src/Node.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Node.h
 Element.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/Element.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Element.h
 iostream
 -
 vector
@@ -86,17 +94,17 @@ vector
 limits
 -
 
-/home/kaushik/MyStuff/eikonal-unstructured/src/main.cpp
+/home/kaushik/Dropbox/eikonal-unstructured/src/main.cpp
 main.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/main.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/main.h
 
-/home/kaushik/MyStuff/eikonal-unstructured/src/main.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/main.h
 iostream
 -
 functional
 -
 Mesh2D.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/Mesh2D.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/Mesh2D.h
 EikonalSolver.h
-/home/kaushik/MyStuff/eikonal-unstructured/src/EikonalSolver.h
+/home/kaushik/Dropbox/eikonal-unstructured/src/EikonalSolver.h
 

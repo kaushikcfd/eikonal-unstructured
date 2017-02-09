@@ -7,6 +7,9 @@
 #include <set>
 #include <queue>
 #include <cmath>
+#include <cstdlib>
+#include <sstream>
+#include <fstream>
 
 #include "Mesh2D.h"
 #include "Node.h"

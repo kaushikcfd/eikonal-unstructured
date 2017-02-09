@@ -117,7 +117,8 @@ int main() {
     solver->solve();
 
     /*Plotting the current state of the solver*/
-    solver->plotStates("../Debug/debugStates/States2.dat");
+    string fileName = "../Debug/debugStates/latest.dat";
+    solver->plotStates(fileName);
     
     return 0;
 }
