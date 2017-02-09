@@ -293,39 +293,34 @@ void EikonalSolver::scheme(Node* n) {
 
     
 
-    if(indexOfMinElement > -1){
-        // This means that we had one element with the minimum time which satisifies all the conditions and hence it must be accepted.
+    if(indexOfMinElement > -1) // This means that we had one element with the minimum time which satisifies all the conditions and hence it must be accepted.
         n->updateAccept(ACCEPTED);/// Accepting the node.
-        n->setT(minTime);/// Updating the `T` of the node.
-    
-        if(initialAccept != ACCEPTED){
-            // Inititally the `Node n` was not a part of the NarrowBand and hence this must be pushed into the narrowBandHeap
-            narrowBandHeap.push(n);  
-        }
-        else {
-            // This must a narrowBand Node, and hence the edits have been done in the heap. Now the heap must be updated to sort once again.
-            if(minTime!=initialSolution)// If the new Solution conicided with the earlier Solution, no need to make changes in the narrowBandHeap.
-            {
-                fprintf(stderr, "Entering refreshHeap for the node at (%.4f, %.4f). The earlier time was %.4f\n", x, y, initialSolution);// Adding this for debugging purposes.
-                refreshHeap();
-            }
-        }
-    }
     else {
         /// The node cannot be accepted, but if atleast we could set the `T` value from one of the solutions, even though it may be not accepted, then it is fine.
-        for(int j = 0; j < noNbgElements; j++){
+        for(int j = 0; j < noNbgElements; j++){ // Finding the minimum time among all the neighboring elements.
             if( (possibleSolutions[j] < minTime) ) {
                 minTime = possibleSolutions[j];
             }
         }
-       
         n->updateAccept(AMBIGUOUS);
-        if(n->getTimesRecomputed() > (0.5*noNbgElements)){
-            n->updateAccept(ACCEPTED);
-            narrowBandHeap.push(n);
-        }
-        n->setT(minTime);
     }
+
+
+    n->setT(minTime);/// Updating the `T` of the node.
+
+    if(initialAccept != ACCEPTED){
+        // Inititally the `Node n` was not a part of the NarrowBand and hence this must be pushed into the narrowBandHeap
+        narrowBandHeap.push(n);  
+    }
+    else {
+        // This must a narrowBand Node, and hence the edits have been done in the heap. Now the heap must be updated to sort once again.
+        if(fabs(minTime-initialSolution)>5e-3)// If the new Solution conicided with the earlier Solution, no need to make changes in the narrowBandHeap.
+        {
+            fprintf(stderr, "Entering refreshHeap for the node at (%.4f, %.4f). The earlier time was %.4f\n", x, y, initialSolution);// Adding this for debugging purposes.
+            refreshHeap();
+        }
+    }
+
     return ;
 }
 
@@ -414,7 +409,11 @@ int EikonalSolver::solve() {
         currentNode = narrowBandHeap.top();// Now it is ensured that the node with the minimum is considered.
 
         narrowBandHeap.pop(); // Removed from the heap.
+    
+        if(currentNode->getAccept()!=ACCEPTED)
+            scheme(currentNode);
 
+        currentNode->updateAccept(ACCEPTED);// Accepting the node.
         currentNode->updateState(ALIVE);/// Marking the node as alive.
         
         /**This is just for debugging.**/
