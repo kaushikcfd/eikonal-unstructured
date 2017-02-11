@@ -1,4 +1,4 @@
 src/.tags*
 build/*
 Debug/debugStates/Video/*
-Files/*
+Files/

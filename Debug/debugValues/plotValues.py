@@ -15,20 +15,20 @@ triangles = []
 # Reading values from the files
 #-----------------------------------------------------------------------------
 
-with open('square-structured-Nodes.dat', 'r') as f:
+with open('rectangle-structured-Nodes.dat', 'r') as f:
     noNodes = int(f.readline())
     for i in range(noNodes):
         x_y = map(float, f.readline().strip().split())
         x.append(x_y[0])
         y.append(x_y[1])
 
-with open('square-structured-Elements.dat', 'r') as f:
+with open('rectangle-structured-Elements.dat', 'r') as f:
     noElements = int(f.readline())
     for i in range(noElements):
         node1_2_3 = map(int, f.readline().strip().split())
         triangles.append(node1_2_3)
 
-with open('dahiya_paper-structured.dat', 'r') as f:
+with open('cos-rect-structured.dat', 'r') as f:
     noValues = int(f.readline())
     for i in range(noValues):
         t = float(f.readline())
@@ -41,11 +41,6 @@ with open('dahiya_paper-structured.dat', 'r') as f:
 
 triang = tri.Triangulation(x, y, triangles)
 
-#-----------------------------------------------------------------------------
-# Refine data
-#-----------------------------------------------------------------------------
-refiner = tri.UniformTriRefiner(triang)
-tri_refi, z_test_refi = refiner.refine_field(T, subdiv=3)
 
 #-----------------------------------------------------------------------------
 # Plotting the figure
@@ -53,8 +48,8 @@ tri_refi, z_test_refi = refiner.refine_field(T, subdiv=3)
 plt.figure()
 plt.gca().set_aspect('equal')
 plt.tricontour(triang, T, 10)
-#plt.tricontour(tri_refi, z_test_refi, 10)
 plt.colorbar()
-plt.title("Planar Wavefront with no sweeping")
+#plt.title("Planar Wavefront on Unstructured Grid")
+plt.title(r"$F = 2 - \frac{1}{2}\cos^2\left(\pi\left(y-\frac{1}{2}\right)\right)$- Rectangular Structured Grid")
 
 plt.show()
