@@ -53,10 +53,12 @@ private:
     void refreshHeap(); /// This function would help us construct the heap again from scratch.
     float calculateCharacteristic(float T, Node* n, float a, float b, float c, float d);/// This is the function which calculates the causality direction, which is represented as Phi in the paper of reference.
     bool checkCausality(Node *n0, float thetaStart, float thetaEnd, float phi);/// This is the function which tests whether the causality conditions is met. 
+    void recompute(Node* n); // This function would be similar to scheme(), just that there would be no upgradation of the states.
 
 public:
     EikonalSolver(Mesh2D* _mesh, function<float(float, float)> _F, function<float(float, float)> _v1, function<float(float, float)> _v2);
     void plotStates(string outputFile);
+    void printT(string outputFile); /// This is the function in order to print the `T` in the order of the available nodes.
     int solve();
 
 };

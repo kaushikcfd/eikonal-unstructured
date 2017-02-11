@@ -6,7 +6,7 @@
  */
 
 #include "main.h"
-#define FILE_PATH "../Grids/square-unstructured.msh"
+#define FILE_PATH "../Grids/square-structured.msh"
 
 /**
  * This function serves as an input function for wave speed. In all the papers this is denoted as `F(x, y)`
@@ -15,8 +15,8 @@
  * @return   Speed of the wave in the medium of interest
  */
 float waveSpeed(float x, float y) {
-    return 1.0;
-    //return (2 - 0.5*(cos(3.1415926*(y-0.5))*cos(3.1415926*(y-0.5))));
+   // return 1.0;
+   return (2.0 - 0.5*(cos(3.1415926*(y-0.5))*cos(3.1415926*(y-0.5))));
 }
 
 /**
@@ -119,6 +119,9 @@ int main() {
     /*Plotting the current state of the solver*/
     string fileName = "../Debug/debugStates/latest.dat";
     solver->plotStates(fileName);
+
+    /*Plotting the information about the T*/
+    solver->printT("../Debug/debugValues/dahiya_paper.dat");
     
     return 0;
 }
