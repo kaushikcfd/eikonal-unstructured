@@ -87,7 +87,7 @@ CMAKE_INSTALL_PREFIX:PATH=/usr/local
 CMAKE_LINKER:FILEPATH=/usr/bin/ld
 
 //Path to a program.
-CMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/gmake
+CMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/make
 
 //Flags used by the linker during the creation of modules.
 CMAKE_MODULE_LINKER_FLAGS:STRING=

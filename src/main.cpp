@@ -6,7 +6,7 @@
  */
 
 #include "main.h"
-#define FILE_PATH "../Grids/rectangle-structured.msh"
+#define FILE_PATH "../Grids/square-refined.msh"
 
 /**
  * This function serves as an input function for wave speed. In all the papers this is denoted as `F(x, y)`
@@ -15,8 +15,11 @@
  * @return   Speed of the wave in the medium of interest
  */
 float waveSpeed(float x, float y) {
-   //return 1.0;
-   return (2.0 - 0.5*(cos(3.1415926*(y-0.5))*cos(3.1415926*(y-0.5))));
+    if(y<=1.0 and y>=0.0)
+        return (2.0 - 0.5*(cos(3.1415926*(y-0.5))*cos(3.1415926*(y-0.5))));
+    else
+        return 2.0;
+
 }
 
 /**
@@ -117,58 +120,7 @@ int main() {
     solver->solve();
 
     /*Plotting the information about the T*/
-    solver->printT("../Debug/debugValues/cos-rect-structured.dat");
+    solver->printT("../Debug/debugValues/square-refined.dat");
     
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**Use this code to check whether the mesh is generated correctly**/
-
-/*FILE* pFile = freopen("nbgTheta.dat", "w", stdout);
-
-    for(int i=0; i < mesh.getNoOfNodes(); i++ ) {
-        fprintf(pFile, "Node %d\n", i);
-        Node *currentNode = mesh.nodes[i];
-        for(int j = 0; j < currentNode->getNoOfNbgElements(); j++ ) {
-            fprintf(pFile, "%6.3f\t", currentNode->getNbgThetaStart()[j]);
-        }
-        fprintf(pFile, "\n");
-        for(int j = 0; j < currentNode->getNoOfNbgElements(); j++ ) {
-            fprintf(pFile, "%6.3f\t", currentNode->getNbgThetaEnd()[j]);
-        }
-        fprintf(pFile, "\n------------------------------------------------------\n");
-    }
-    fclose(pFile);
-    mesh.write("Nodes.dat", "Elements.dat");
-    */
-   // The above operation was to read from the given .msh file & then output the neighbouring elements and the angles formed by the elements w.r.t. a node

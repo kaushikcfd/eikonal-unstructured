@@ -15,20 +15,20 @@ triangles = []
 # Reading values from the files
 #-----------------------------------------------------------------------------
 
-with open('rectangle-structured-Nodes.dat', 'r') as f:
+with open('square-refined-Nodes.dat', 'r') as f:
     noNodes = int(f.readline())
     for i in range(noNodes):
         x_y = map(float, f.readline().strip().split())
         x.append(x_y[0])
         y.append(x_y[1])
 
-with open('rectangle-structured-Elements.dat', 'r') as f:
+with open('square-refined-Elements.dat', 'r') as f:
     noElements = int(f.readline())
     for i in range(noElements):
         node1_2_3 = map(int, f.readline().strip().split())
         triangles.append(node1_2_3)
 
-with open('cos-rect-structured.dat', 'r') as f:
+with open('square-refined.dat', 'r') as f:
     noValues = int(f.readline())
     for i in range(noValues):
         t = float(f.readline())

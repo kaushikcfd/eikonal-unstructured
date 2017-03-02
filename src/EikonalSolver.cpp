@@ -108,7 +108,7 @@ float EikonalSolver::calculateCharacteristic(float T, Node* n, float a, float b,
     if(phi<0)// Changing the range of phi from (-180, 180] to [0. 360).
         phi+=360;
 
-    if(phi!=phi)
+    //if(phi!=phi)
         //fprintf(stderr, "T = %f, a = %f, b = %f, c = %f, d = %f\n", T, a, b, c, d);
     
     return phi;
@@ -578,11 +578,11 @@ int EikonalSolver::solve() {
     Element** nbgElements; 
     
     int counter = 0;// This is a debugging variable feel free to remove it once the debugging is done.
-    string fileName;
+    //string fileName;
 
     while(!narrowBandHeap.empty()){
-        fileName = "Data/States" + to_string(counter) + ".dat";
-        plotStates(fileName);
+        //fileName = "Data/States" + to_string(counter) + ".dat";
+        //plotStates(fileName);
         counter++;
 
 
